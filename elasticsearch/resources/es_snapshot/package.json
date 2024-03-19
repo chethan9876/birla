@@ -1,0 +1,11 @@
+{
+  "name": "aws-es-snapshot",
+  "description": "Create ES Snapshot",
+  "version": "1.0.0",
+  "author": "Venky",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "request": "^2.88.0"
+  }
+}
