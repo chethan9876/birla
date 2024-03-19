@@ -1,0 +1,33 @@
+{
+  "policy_id": "es_indexes_delete",
+  "description": "Delete indexes older than 90 days",
+  "schema_version": 1,
+  "error_notification": null,
+  "default_state": "search",
+  "states": [
+    {
+      "name": "search",
+      "actions": [],
+      "transitions": [
+        {
+          "state_name": "delete",
+          "conditions": {
+            "min_index_age": "90d"
+          }
+        }
+      ]
+    },
+    {
+      "name": "delete",
+      "actions": [
+        {
+          "delete": {}
+        }
+      ],
+      "transitions": []
+    }
+  ],
+  "ism_template": {
+    "index_patterns": ["*"]
+  }
+}

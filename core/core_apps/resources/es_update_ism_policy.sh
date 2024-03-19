@@ -1,0 +1,1 @@
+curl --request PUT -sL --url '${es_url}/_opendistro/_ism/policies/es_indexes_delete' --header 'Content-Type: application/json' --data '${indexes_policy}'
