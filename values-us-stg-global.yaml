@@ -1,0 +1,157 @@
+# Default values for alcyon-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+global:
+  replicaCount: 1
+  eksVersion: "old"
+  usealb: false
+  image:
+    registry: dockerp.rtsprod.net
+    pullPolicy: IfNotPresent
+    pullSecret: regsecret
+  environment: production
+  ingress:
+    class: "nginx"
+    webDomain: us-stg.rts.onl
+    serviceDomain: alc-api.us-stg.rts.onl
+    photonoticeDomain: photonotice.us-stg.rts.onl
+    wizardDomain: wizard.us-stg.rts.onl
+    sidekiqDomain: sidekiq.us-stg.rts.onl
+    armDomain: arm.us-stg.rts.onl
+    ipaprocessrDomain: ipaprocessr.us-stg.rts.onl
+  publicIngress:
+    class: ""
+    serviceDomain: alcyonapi.us-stg.rts.onl
+  minioEnabled: "false"
+  activeSpringProfile: Production
+  reports:
+    db:
+      host: alcyon-reports-us-stg-aur-db-0.cu6ciq2zcxyg.us-west-2.rds.amazonaws.com
+      port: 5432
+      allowCIDR:
+        - 10.35.11.0/24
+        - 10.35.12.0/24
+        - 10.35.13.0/24
+  db:
+    host: alcyon-us-stg-aur-db-2-cluster.cluster-cu6ciq2zcxyg.us-west-2.rds.amazonaws.com
+    port: 5432
+    allowCIDR:
+      - 10.35.11.0/24
+      - 10.35.12.0/24
+      - 10.35.13.0/24
+  sqs:
+    allowCIDR: #SQS VPC endpoint IP
+      - 10.35.1.111/32
+      - 10.35.2.196/32
+      - 10.35.3.133/32
+  loadBalancer:
+    allowCIDR:
+      - 10.35.1.0/24
+      - 10.35.2.0/24
+      - 10.35.3.0/24
+  internalLB:
+    allowCIDR:
+      - 10.35.1.200/32
+      - 10.35.2.24/32
+      - 10.35.3.43/32
+  kafka:
+    allowCIDR:
+      - 10.35.11.0/24
+      - 10.35.12.0/24
+      - 10.35.13.0/24
+    port: 9096
+  s3:
+    # curl -L https://ip-ranges.amazonaws.com/ip-ranges.json | jq '.prefixes[] | select(.service=="S3" and .region=="us-west-2") | .ip_prefix'
+    # Field services buckets are in us-east-1 in staging
+    # curl -L https://ip-ranges.amazonaws.com/ip-ranges.json | jq '.prefixes[] | select(.service=="S3" and .region=="us-east-1") | .ip_prefix'
+    region: us-west-2
+    allowCIDR:
+      - 3.5.0.0/18
+      - 3.5.76.0/22
+      - 3.5.80.0/21
+      - 52.92.16.0/20
+      - 52.92.128.0/17
+      - 52.216.0.0/15
+      - 52.218.128.0/17
+      - 54.231.0.0/17
+      - 3.5.0.0/19
+      - 16.182.0.0/16
+      - 18.34.0.0/19
+      - 18.34.232.0/21
+      - 44.192.134.240/28
+      - 44.192.140.64/28
+      - 52.216.0.0/15
+      - 54.231.0.0/16
+  elasticsearch:
+    protocol: https
+    host: "vpc-logs-us-west-2-jr5okkpagk3iy6c7yed5bfc5aq.us-west-2.es.amazonaws.com"
+    allowCIDR:
+      - 10.35.1.0/24
+      - 10.35.2.0/24
+      - 10.35.3.0/24
+    port: 443
+  nginx:
+    allowCIDR:
+      - 10.35.0.0/16
+      - 172.21.0.0/16
+      - 172.22.0.0/16
+  falcon:
+    allowCIDR:
+      - 35.160.117.193
+      - 52.43.192.139
+      - 54.187.226.134
+  okta:
+    allowCIDR:
+      - 0.0.0.0/0 # TODO: restrict if Okta has published public IP range.
+  ec2Metadata:
+    allowCIDR: 169.254.169.254/32
+  route53:
+    allowCIDR: 0.0.0.0/0
+    port: 443
+  mongo:
+    host: alcyon-archive.us-stg.rts.onl
+    username: mongo
+    ssl: true
+    port: 27017
+    database: instigator
+    allowCIDR:
+      - 10.35.11.0/24
+      - 10.35.12.0/24
+      - 10.35.13.0/24
+  redis:
+    url: redis://alcyon-redis.us-stg.rts.onl:6379/0
+    allowCIDR:
+      - 10.35.11.0/24
+      - 10.35.12.0/24
+      - 10.35.13.0/24
+  onPremDB:
+    host: "172.31.4.111"
+    port: "1521"
+    database: "qaapp.qatest.redflex.com"
+    username: "READ_ONLY"
+    allowCIDR:
+      - 172.31.4.0/24
+  kubeApiServerPodCIDR: #TODO: Replace the below value with EKS cluster subnets CIDR Ranges
+    - 10.35.0.0/16
+  kubeApiServerPodPort: 6443
+  baseNamespace: base
+  baseReleaseName: base-release
+  monitoringNamespace: monitoring
+  applicationNamespace: alcyon-app
+  usNamespace: alcyon-app
+  utilityNamespace: utility
+  migrationNamespace: migration
+  armNamespace: arm
+  alcyoncontrolNamespace: alcyon-control
+  stubNamespace: stub
+  configserver:
+    useLocalFile: false
+    retry:
+      maxAttempts: 4
+    rest:
+      domain: http://configstore.utility
+      username: ''
+      password: ''
+    cache:
+      evictFrequency: 300000
+      enableEviction: true

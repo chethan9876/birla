@@ -1,0 +1,133 @@
+# Default values for alcyon-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+global:
+  replicaCount: 1
+  eksVersion: "1.24"
+  usealb: true
+  environmentName: "stg-nz-wk"
+  image:
+    registry: dockerp.rtsprod.net
+    pullPolicy: Always
+    pullSecret: regsecret
+  environment: production
+  ingress:
+    class: "nginx"
+    webDomain: stg.redflexnz.onl
+    serviceDomain: alc-api.stg.redflexnz.onl
+    serviceDomainALB: alc-api-alb.stg.redflexnz.onl
+    photonoticeDomainWA: photonotice.stg.redflexnz.onl
+    sidekiqDomain: sidekiq.stg.redflexnz.onl
+    armDomain: arm.stg.redflexnz.onl
+  publicIngress:
+    class: "public-ingress-nginx"
+    serviceDomain: alcyonapi.stg.redflexnz.onl
+    serviceDomainALB: alcyonapi-api.stg.redflexnz.onl
+  publicSubnets: subnet-045b9f9c364df6fab,subnet-02966d75e94eeecd8
+  certificateARN: arn:aws:acm:ap-southeast-2:774407230214:certificate/aaf53623-fa5c-4b54-a0cd-1ec77465e837
+  minioEnabled: "false"
+  activeSpringProfile: Production
+  db:
+    host: stg-nz-wk-alcyon-backoffice-rds.stg.redflexnz.onl
+    port: 5432
+    allowCIDR:
+      - 10.137.11.0/24
+      - 10.137.12.0/24
+      - 10.137.13.0/24
+  reports:
+    db:
+      host: stg-nz-wk-alcyon-backoffice-report-rds.stg.redflexnz.onl
+      port: 5432
+      allowCIDR:
+        - 10.137.11.0/24
+        - 10.137.12.0/24
+        - 10.137.13.0/24
+  sqs:
+    allowCIDR: #SQS VPC endpoint IP
+      - 10.137.1.0/24
+      - 10.137.2.0/24
+      - 10.137.3.0/24
+  kafka:
+    allowCIDR:
+      - 10.137.11.0/24
+      - 10.137.12.0/24
+      - 10.137.13.0/24
+    port: 9096
+  loadBalancer:
+    allowCIDR:
+      - 10.137.1.0/24
+      - 10.137.2.0/24
+      - 10.137.3.0/24
+      - 10.137.101.0/24
+      - 10.137.102.0/24
+  internalLB:
+    allowCIDR:
+      - 10.137.1.0/24
+      - 10.137.2.0/24
+      - 10.137.3.0/24
+  s3:
+    region: us-west-2
+    allowCIDR:
+      # curl -L https://ip-ranges.amazonaws.com/ip-ranges.json | jq '.prefixes[] | select(.service=="S3" and .region=="ap-southeast-2") | .ip_prefix'
+      - 52.95.128.0/21
+      - 3.5.164.0/22
+      - 3.5.168.0/23
+      - 3.26.88.0/28
+      - 3.26.88.16/28
+  elasticsearch:
+    protocol: https
+    host: "vpc-stg-nz-wk-logs-es-7ntfkwchkth34upmz4tof5jyrm.ap-southeast-2.es.amazonaws.com"
+    allowCIDR:
+      - 10.137.1.0/24
+      - 10.137.2.0/24
+      - 10.137.3.0/24
+    port: 443
+  nginx:
+    allowCIDR:
+      - 10.137.0.0/16
+      - 172.20.0.0/16
+      - 172.21.0.0/16
+  okta:
+    allowCIDR:
+      - 0.0.0.0/0 # TODO: restrict if Okta has published public IP range.
+  mongo:
+    host: "stg-nz-wk-alcyon-migration-docdb.stg.redflexnz.onl"
+    username: mongo
+    ssl: false
+    port: 27017
+    database: instigator
+    allowCIDR:
+      - 10.137.11.0/24
+      - 10.137.12.0/24
+      - 10.137.13.0/24
+  redis:
+    url: redis://stg-nz-wk-alcyon-migration-redis.stg.redflexnz.onl:6379/0
+    allowCIDR:
+      - 10.137.11.0/24
+      - 10.137.12.0/24
+      - 10.137.13.0/24
+  onPremDB:
+    host: "172.31.4.111"
+    port: "1521"
+    database: "qaapp.qatest.redflex.com"
+    username: "READ_ONLY"
+    allowCIDR:
+      - 172.31.4.0/24
+  ec2Metadata:
+    allowCIDR: 169.254.169.254/32
+  route53:
+    allowCIDR: 0.0.0.0/0
+    port: 443
+  kubeApiServerPodCIDR: #TODO: Replace the below value with EKS cluster subnets CIDR Ranges
+    - 10.137.0.0/16
+  kubeApiServerPodPort: 443
+  baseNamespace: base
+  baseReleaseName: base-release
+  monitoringNamespace: monitoring
+  alcyoncontrolNamespace: alcyon-control
+  applicationNamespace: alcyon-app
+  utilityNamespace: utility
+  armNamespace: arm
+  alcyonExpressNamespace: alcyon-express
+  stubNamespace: stub
+  nzNamespace: upgrade

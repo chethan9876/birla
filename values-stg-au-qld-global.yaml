@@ -1,0 +1,139 @@
+# Default values for alcyon-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+global:
+  replicaCount: 1
+  eksVersion: "1.26"
+  usealb: true
+  environmentName: "stg-au-qld"
+  image:
+    registry: dockerp.rtsprod.net
+    pullPolicy: Always
+    pullSecret: regsecret
+  environment: production
+  ingress:
+    class: "nginx"
+    webDomain: stg.redflexqld.onl
+    serviceDomain: alc-api.stg.redflexqld.onl
+    serviceDomainALB: alc-api-alb.stg.redflexqld.onl
+    photonoticeDomainWA: photonotice.stg.redflexqld.onl
+    sidekiqDomain: sidekiq.stg.redflexqld.onl
+    armDomain: arm.stg.redflexqld.onl
+  publicIngress:
+    class: "public-ingress-nginx"
+    serviceDomain: alcyonapi.stg.redflexqld.onl
+    serviceDomainALB: alcyonapi-api.stg.redflexqld.onl
+  publicSubnets: subnet-08b4daa3914ea3d19, subnet-05782c20717fb038c
+  certificateARN: arn:aws:acm:ap-southeast-2:983347084765:certificate/cfb8c20e-523d-40c1-b2b7-1e84706aa42c
+  wafARN: arn:aws:wafv2:ap-southeast-2:983347084765:regional/webacl/stg-au-qld-web-acl/fd52a214-07dd-49db-8768-cf8a13209d8f
+  minioEnabled: "false"
+  activeSpringProfile: Production
+  db:
+    host: stg-au-qld-alcyon-backoffice-rds.stg.redflexqld.onl
+    port: 5432
+    allowCIDR:
+      - 10.138.11.0/24
+      - 10.138.12.0/24
+      - 10.138.13.0/24
+  reports:
+    db:
+      host: stg-au-qld-alcyon-backoffice-report-rds.stg.redflexqld.onl
+      port: 5432
+      allowCIDR:
+        - 10.138.11.0/24
+        - 10.138.12.0/24
+        - 10.138.13.0/24
+  sqs:
+    allowCIDR: #SQS VPC endpoint IP
+      - 10.138.1.0/24
+      - 10.138.2.0/24
+      - 10.138.3.0/24
+  loadBalancer:
+    allowCIDR:
+      - 10.138.1.0/24
+      - 10.138.2.0/24
+      - 10.138.3.0/24
+      - 10.138.101.0/24
+      - 10.138.102.0/24
+  kafka:
+    allowCIDR:
+      - 10.138.11.0/24
+      - 10.138.12.0/24
+      - 10.138.13.0/24
+    port: 9096
+  internalLB:
+    allowCIDR:
+      - 10.33.4.212/32
+      - 10.35.5.65/32
+  s3:
+    region: us-west-2
+    allowCIDR:
+      # curl -L https://ip-ranges.amazonaws.com/ip-ranges.json | jq '.prefixes[] | select(.service=="S3" and .region=="ap-southeast-2") | .ip_prefix'
+      - 52.95.128.0/21
+      - 3.5.164.0/22
+      - 3.5.168.0/23
+      - 3.26.88.0/28
+      - 3.26.88.16/28
+  elasticsearch:
+    protocol: https
+    host: "vpc-stg-au-qld-logs-es-tial7li7xbithupae5l77gpqbm.ap-southeast-2.es.amazonaws.com"
+    allowCIDR:
+      - 10.138.1.0/24
+      - 10.138.2.0/24
+      - 10.138.3.0/24
+    port: 443
+  nginx:
+    allowCIDR:
+      - 10.138.0.0/16
+      - 172.20.0.0/16
+      - 172.21.0.0/16
+  falcon:
+    allowCIDR:
+      - 35.160.117.193
+      - 52.43.192.139
+      - 54.187.226.134
+  okta:
+    allowCIDR:
+      - 0.0.0.0/0 # TODO: restrict if Okta has published public IP range.
+  mongo:
+    host: "stg-au-qld-alcyon-migration-docdb.stg.redflexqld.onl"
+    username: mongo
+    ssl: false
+    port: 27017
+    database: instigator
+    allowCIDR:
+      - 10.138.11.0/24
+      - 10.138.12.0/24
+      - 10.138.13.0/24
+  redis:
+    url: redis://stg-au-qld-alcyon-migration-redis.stg.redflexqld.onl:6379/0
+    allowCIDR:
+      - 10.138.11.0/24
+      - 10.138.12.0/24
+      - 10.138.13.0/24
+  onPremDB:
+    host: "10.138.12.191"
+    port: "1522"
+    database: "XE"
+    username: "IIPS_WA_SCRUM"
+    allowCIDR:
+      - 10.138.12.191/32
+  ec2Metadata:
+    allowCIDR: 169.254.169.254/32
+  route53:
+    allowCIDR: 0.0.0.0/0
+    port: 443
+  kubeApiServerPodCIDR: #TODO: Replace the below value with EKS cluster subnets CIDR Ranges
+    - 10.138.0.0/16
+  kubeApiServerPodPort: 443
+  baseNamespace: base
+  baseReleaseName: base-release
+  monitoringNamespace: monitoring
+  applicationNamespace: alcyon-app
+  utilityNamespace: utility
+  migrationNamespace: migration
+  armNamespace: arm
+  stubNamespace: stub
+  qldNamespace: au-qld
+
+

@@ -1,0 +1,123 @@
+# Default values for alcyon-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+global:
+  replicaCount: 1
+  eksVersion: "1.21"
+  image:
+    registry: dockerp.rtsprod.net
+    pullPolicy: IfNotPresent
+    pullSecret: regsecret
+  environment: production
+  ingress:
+    class: "nginx"
+    webDomain: uat.redflexusa.onl
+    serviceDomain: alc-api.uat.redflexusa.onl
+    photonoticeDomain: photonotice.uat.redflexusa.onl
+    wizardDomain: wizard.uat.redflexusa.onl
+    sidekiqDomain: sidekiq.uat.redflexusa.onl
+    armDomain: arm.uat.redflexusa.onl
+  publicIngress:
+    class: ""
+    serviceDomain: alcyonapi.uat.redflexusa.onl
+  minioEnabled: "false"
+  activeSpringProfile: Production
+  db:
+    host: uat-us-govcloud-alcyon-backoffice-rds.uat.redflexusa.onl
+    port: 5432
+    allowCIDR:
+      - 10.252.11.0/24
+      - 10.252.12.0/24
+      - 10.252.13.0/24
+  reports:
+    db:
+      host: uat-us-govcloud-alcyon-backoffice-report-rds.uat.redflexusa.onl
+      port: 5432
+      allowCIDR:
+        - 10.254.11.202/32
+  sqs:
+    allowCIDR: #SQS VPC endpoint IP Eric create endpoints
+      - 10.252.1.14/32
+      - 10.252.2.153/32
+      - 10.252.3.251/32
+  loadBalancer:
+    allowCIDR:
+      - 10.252.1.0/24
+      - 10.252.2.0/24
+      - 10.252.3.0/24
+  internalLB: #change after deploying base charts
+    allowCIDR:
+      - 10.202.1.46/32
+      - 10.202.2.56/32
+      - 10.202.3.34/32
+  s3:
+    # curl -L https://ip-ranges.amazonaws.com/ip-ranges.json | jq '.prefixes[] | select(.service=="S3" and .region=="us-gov-west-1") | .ip_prefix'
+    region: us-gov-west-1
+    allowCIDR:
+      - 0.0.0.0/0 # Need to communicate to us-west-2 and us-east-1 for FS.
+  elasticsearch:
+    protocol: https
+    host: "vpc-uat-us-govcloud-logs-es-hrnhbbfvl37cjboyqvdiv6do7y.us-gov-west-1.es.amazonaws.com"
+    allowCIDR:
+      - 10.252.1.0/24
+      - 10.252.2.0/24
+      - 10.252.3.0/24
+    port: 443
+  reports:
+    db:
+      allowCIDR:
+        - 172.20.90.161/32
+  nginx:
+    allowCIDR:
+      - 10.252.0.0/16
+      - 172.21.0.0/16
+      - 172.22.0.0/16
+  falcon:
+    allowCIDR:
+      - 35.160.117.193
+      - 52.43.192.139
+      - 54.187.226.134
+  okta:
+    allowCIDR:
+      - 0.0.0.0/0 # TODO: restrict if Okta has published public IP range.
+  ec2Metadata:
+    allowCIDR: 169.254.169.254/32
+  route53:
+    allowCIDR: 0.0.0.0/0
+    port: 443
+  mongo:
+    host: "uat-us-govcloud-alcyon-migration-docdb.uat.redflexusa.onl"
+    port: 27017
+    ssl: false
+    database: instigator
+    username: mongo
+    allowCIDR:
+      - 10.252.11.0/24
+      - 10.252.12.0/24
+      - 10.252.13.0/24
+  redis:
+    url: redis://uat-us-govcloud-alcyon-migration-redis.uat.redflexusa.onl:6379/0
+    allowCIDR:
+      - 10.252.11.0/24
+      - 10.252.12.0/24
+      - 10.252.13.0/24
+  onPremDB:
+    host: "192.168.101.112"
+    port: "1521"
+    database: "rfprod"
+    username: "READ_ONLY"
+    allowCIDR:
+      - 192.168.101.0/24
+  kubeApiServerPodCIDR: #TODO: Replace the below value with EKS cluster subnets CIDR Ranges
+    - 10.252.0.0/16
+  kubeApiServerPodPort: 443
+  baseNamespace: base
+  baseReleaseName: base-release
+  monitoringNamespace: monitoring
+  applicationNamespace: alcyon-app
+  utilityNamespace: utility
+  migrationNamespace: migration
+  armNamespace: arm
+  alcyoncontrolNamespace: alcyon-control
+  usNamespace: us
+  fieldserviceNamespace: alcyon-fs

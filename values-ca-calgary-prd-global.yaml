@@ -1,0 +1,90 @@
+global:
+  replicaCount: 1
+  eksVersion: "1.21"
+  image:
+    registry: dockerp.rtsprod.net
+    pullPolicy: IfNotPresent
+    pullSecret: regsecret
+  environment: production
+  ingress:
+    class: "nginx"
+    webDomain: alcyon.redflexcalgary.onl
+    serviceDomain: alc-api.prd.redflexcalgary.onl
+    photonoticeDomain: "photonotice.redflexcalgary.onl"
+  publicIngress:
+    class: "public-ingress-nginx"
+    serviceDomain: alcyonapi.prd.redflexcalgary.onl
+  minioEnabled: "false"
+  activeSpringProfile: Production
+  reports:
+    db:
+      host: ""
+      port: ""
+      allowCIDR: #TODO: Deployment fails without the value. Need to fix the helm chart.
+        - 10.53.11.0/24
+        - 10.53.12.0/24
+  db:
+    host: prd-ca-calgary-alcyon-control-rds.prd.redflexcalgary.onl
+    port: 5432
+    allowCIDR:
+      - 10.53.11.0/24
+      - 10.53.12.0/24
+  sqs:
+    allowCIDR: #SQS VPC endpoint IP
+      - 10.53.1.142/32
+      - 10.53.2.28/32
+  loadBalancer:
+    allowCIDR:
+      - 10.53.1.0/24
+      - 10.53.2.0/24
+  internalLB: #TODO: Assign the below values after ingress-nginx is created
+    allowCIDR:
+      #TODO: Assign the below values after ingress-nginx is created
+        - 10.53.1.0/24
+        - 10.53.2.0/24
+  s3: # The allowCIDR values can be obtained from AWS Console VPC->Managed Prefix Lists->Select Prefix List (com.amazonaws.ca-central-1.s3)->Entries
+    # curl -L https://ip-ranges.amazonaws.com/ip-ranges.json | jq '.prefixes[] | select(.service=="S3" and .region=="ca-central-1") | .ip_prefix'
+    allowCIDR:
+      - 3.5.252.0/22
+      - 3.98.24.0/28
+      - 3.98.24.16/28
+      - 16.12.4.0/23
+      - 52.95.145.0/24
+      - 52.95.146.0/23
+      - 52.95.190.0/24
+  elasticsearch:
+    protocol: https
+    host: "vpc-prd-ca-calgary-logs-es-7gobspefa4y6yjmoxog74ko7hm.ca-central-1.es.amazonaws.com"
+    allowCIDR:
+      - 10.53.1.0/24
+      - 10.53.2.0/24
+    port: 443
+  nginx:
+    allowCIDR:
+      - 10.53.0.0/16
+      - 172.21.0.0/16
+      - 172.22.0.0/16
+  falcon:
+    allowCIDR:
+      - 35.160.117.193
+      - 52.43.192.139
+      - 54.187.226.134
+  okta:
+    allowCIDR:
+      - 0.0.0.0/0 # TODO: restrict if Okta has published public IP range.
+  ec2Metadata:
+    allowCIDR: 169.254.169.254/32
+  route53:
+    allowCIDR: 0.0.0.0/0
+    port: 443
+  kubeApiServerPodCIDR: # EKS API Server Endpoint https://4A5ECA3857AB726A294123786ACFBA9B.yl4.ca-central-1.eks.amazonaws.com
+    - 10.53.1.0/24
+    - 10.53.2.0/24
+  kubeApiServerPodPort: 443
+  baseNamespace: base
+  baseReleaseName: base-release
+  monitoringNamespace: monitoring
+  applicationNamespace: alcyon-app
+  calgaryNamespace: ca-calgary
+  utilityNamespace: utility
+  alcyoncontrolNamespace: alcyon-control

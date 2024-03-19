@@ -1,0 +1,82 @@
+# Database scripts
+
+## Initialize
+
+docker run -it --rm jbergknoff/postgresql-client postgresql://ALCYON:Alcy0nS#cr#t@us-on-prem-pre-prod-1.cu6ciq2zcxyg.us-west-2.rds.amazonaws.com/postgres
+
+````sql
+CREATE DATABASE seekr;
+CREATE ROLE seekr WITH LOGIN PASSWORD 'S##KR_S#CR#T' NOSUPERUSER NOINHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;
+\c seekr
+CREATE SCHEMA seekr;
+DROP SCHEMA public;
+GRANT ALL PRIVILEGES ON SCHEMA seekr TO  seekr;
+
+\c postgres
+CREATE DATABASE ledgr;
+CREATE ROLE ledgr WITH LOGIN PASSWORD 'L#DGR_S#CR#T' NOSUPERUSER NOINHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;
+\c ledgr
+CREATE SCHEMA ledgr;
+DROP SCHEMA public;
+GRANT ALL PRIVILEGES ON SCHEMA ledgr TO  ledgr;
+
+\c postgres
+CREATE DATABASE wizard;
+CREATE ROLE wizard WITH LOGIN PASSWORD 'WIZARD_S#CR#T' NOSUPERUSER NOINHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;
+\c wizard
+CREATE SCHEMA wizard;
+DROP SCHEMA public;
+GRANT ALL PRIVILEGES ON SCHEMA wizard TO  wizard;
+
+\c postgres
+CREATE DATABASE collectr;
+CREATE ROLE collectr WITH LOGIN PASSWORD 'Coll#ctrS#CR#T' NOSUPERUSER NOINHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;
+
+\c collectr
+CREATE SCHEMA collectr;
+DROP SCHEMA public;
+GRANT ALL PRIVILEGES ON SCHEMA collectr TO  collectr;
+
+
+\c postgres
+CREATE DATABASE rundeck;
+CREATE ROLE rundeck WITH LOGIN PASSWORD 'Rund#ckS#cr#t' NOSUPERUSER NOINHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;
+\c rundeck
+CREATE SCHEMA rundeck;
+GRANT ALL PRIVILEGES ON SCHEMA rundeck TO rundeck;
+
+````
+
+## Alcyon Reports DB
+
+docker run -it --rm jbergknoff/postgresql-client postgresql://postgres:XXX@XXXX
+
+````sql
+CREATE DATABASE alcyon_report;
+CREATE ROLE alcyon_report WITH LOGIN PASSWORD 'ALCY#N_R#P#RT_S#CR#T' NOSUPERUSER NOINHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;
+CREATE ROLE "alcyon_report_ro" WITH LOGIN PASSWORD 'ALCY#N_R#_R#P#RT_S#CR#T' NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;
+\c alcyon_report
+GRANT alcyon_report TO postgres;
+
+CREATE SCHEMA alcyon_report;
+DROP SCHEMA public;
+GRANT ALL PRIVILEGES ON SCHEMA alcyon_report TO  alcyon_report;
+
+GRANT USAGE ON SCHEMA alcyon_report TO "alcyon_report_ro";
+ALTER DEFAULT PRIVILEGES IN SCHEMA alcyon_report GRANT SELECT ON TABLES TO alcyon_report_ro;
+ALTER DEFAULT PRIVILEGES IN SCHEMA alcyon_report GRANT SELECT ON SEQUENCES TO alcyon_report_ro;
+````
+
+## Calgary Transformr DB
+
+docker run -it --rm jbergknoff/postgresql-client postgresql://postgres:XXX@XXXX
+
+````sql
+CREATE DATABASE calgary;
+CREATE ROLE calgary WITH LOGIN PASSWORD 'XXXX' NOSUPERUSER NOINHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;
+\c calgary
+CREATE SCHEMA calgary;
+DROP SCHEMA public;
+GRANT ALL PRIVILEGES ON SCHEMA calgary TO  calgary;
+
+````

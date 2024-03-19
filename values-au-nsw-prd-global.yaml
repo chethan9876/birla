@@ -1,0 +1,91 @@
+# Default values for alcyon-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+global:
+  replicaCount: 1
+  eksVersion: "1.19"
+  image:
+    registry: docker.rtsprod.net
+    pullPolicy: Always
+    pullSecret: regsecret
+  environment: production
+  ingress:
+    class: "nginx"
+    webDomain: redflexnsw.onl
+    serviceDomain: alc-api.nsw-prd.redflexnsw.onl
+  publicIngress:
+    class: ""
+    serviceDomain: alcyonapi.nsw-prd.redflexnsw.onl
+  minioEnabled: "false"
+  activeSpringProfile: Production
+  db:
+    host: alcyon-nsw-prd-aur-db-2-cluster.cluster-cixzcluzytco.ap-southeast-2.rds.amazonaws.com
+    port: 5432
+    allowCIDR:
+      - 10.50.11.0/24
+      - 10.50.12.0/24
+      - 10.50.13.0/24
+  sqs:
+    allowCIDR: #SQS VPC endpoint IP
+      - 10.50.1.193/32
+      - 10.50.2.190/32
+      - 10.50.3.126/32
+  kafka:
+    allowCIDR:
+      - 10.50.11.0/24
+      - 10.50.12.0/24
+      - 10.50.13.0/24
+  loadBalancer:
+    allowCIDR:
+      - 10.50.1.0/24
+      - 10.50.2.0/24
+      - 10.50.3.0/24
+  internalLB:
+    allowCIDR:
+      - 10.50.1.198/32
+      - 10.50.2.212/32
+  s3:
+    # curl -L https://ip-ranges.amazonaws.com/ip-ranges.json | jq '.prefixes[] | select(.service=="S3" and .region=="ap-southeast-2") | .ip_prefix'
+    allowCIDR:
+      - 52.95.128.0/21
+      - 54.231.248.0/22
+      - 3.5.164.0/22
+      - 54.231.252.0/24
+      - 3.5.168.0/23
+  elasticsearch:
+    protocol: https
+    host: "vpc-es-logs-redflexrms-onl-vxbuo5bb6emb6322l5bq22fzo4.ap-southeast-2.es.amazonaws.com"
+    allowCIDR:
+      - 10.50.1.0/24
+      - 10.50.2.0/24
+      - 10.50.3.0/24
+    port: 443
+  reports:
+    db:
+      allowCIDR:
+        - 10.50.11.0/24 #TODO: update IP once Reports DB is created.
+  nginx:
+    allowCIDR:
+      - 10.50.0.0/16
+  falcon:
+    allowCIDR:
+      - 35.160.117.193
+      - 52.43.192.139
+      - 54.187.226.134
+  okta:
+    allowCIDR:
+      - 0.0.0.0/0 # TODO: restrict if Okta has published public IP range.
+  ec2Metadata:
+    allowCIDR: 169.254.169.254/32
+  route53:
+    allowCIDR: 0.0.0.0/0
+    port: 443
+  kubeApiServerPodCIDR: #TODO: Replace the below value with EKS cluster subnets CIDR Ranges
+    - 10.50.0.0/16
+  kubeApiServerPodPort: 443
+  baseNamespace: base
+  baseReleaseName: base-release
+  monitoringNamespace: monitoring
+  applicationNamespace: alcyon-app
+  fieldServiceNamespace: alcyon-fs
+  utilityNamespace: utility

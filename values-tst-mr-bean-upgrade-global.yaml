@@ -1,0 +1,130 @@
+# Default values for alcyon-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+global:
+  replicaCount: 1
+  eksVersion: "1.21"
+  image:
+    registry: dockerp.rtsprod.net
+    pullPolicy: Always
+    pullSecret: regsecret
+  environment: test
+  ingress:
+    class: "nginx"
+    webDomain: tst.rts.onl
+    serviceDomain: alc-api.tst.rts.onl
+    photonoticeDomain: photonotice.tst.rts.onl
+    photonoticeDomainAB: photonoticeab-upgrade.tst.rts.onl
+    photonoticeDomainCASK: photonoticecack.tst.rts.onl
+    wizardDomain: wizard.tst.rts.onl
+    sidekiqDomain: sidekiq.tst.rts.onl
+    armDomain: arm.tst.rts.onl
+    ipaprocessrDomain: ipaprocessr.tst.rts.onl
+  publicIngress:
+    serviceDomain: alcyonapi.tst.rts.onl
+  minioEnabled: "false"
+  activeSpringProfile: Test
+  db:
+    host: tst-mr-bean-upgrade-alcyon-backoffice-rds-cluster.cluster-cu6ciq2zcxyg.us-west-2.rds.amazonaws.com
+    port: 5432
+    allowCIDR:
+      - 10.254.11.0/24
+      - 10.254.12.0/24
+      - 10.254.13.0/24
+  reports:
+    db:
+      host: tst-mr-bean-upgrade-alcyon-backoffice-report-rds-cluster.cluster-cu6ciq2zcxyg.us-west-2.rds.amazonaws.com
+      port: 5432
+      allowCIDR:
+        - 10.254.11.0/24
+        - 10.254.12.0/24
+        - 10.254.13.0/24
+  sqs:
+    allowCIDR: #SQS VPC endpoint IP
+      - 10.254.1.113/32
+      - 10.254.2.29/32
+      - 10.254.3.254/32
+  kafka:
+    allowCIDR:
+      - 10.254.11.0/24
+      - 10.254.12.0/24
+      - 10.254.13.0/24
+    port: 9096
+  internalLB:
+    allowCIDR:
+      - 10.33.4.212/32
+      - 10.35.5.65/32
+  s3:
+    region: us-west-2
+    allowCIDR:
+      # curl -L https://ip-ranges.amazonaws.com/ip-ranges.json | jq '.prefixes[] | select(.service=="S3" and .region=="us-west-2") | .ip_prefix'
+      - 3.5.0.0/18
+      - 3.5.76.0/22
+      - 3.5.80.0/21
+      - 52.92.16.0/20
+      - 52.92.128.0/17
+      - 52.216.0.0/15
+      - 52.218.128.0/17
+      - 54.231.0.0/17
+  elasticsearch:
+    protocol: https
+    host: "vpc-tst-mr-bean-logs-es-b5hmgerteulm5v47y76kiohzvm.us-west-2.es.amazonaws.com"
+    allowCIDR:
+      - 10.254.1.0/24
+      - 10.254.2.0/24
+      - 10.254.3.0/24
+    port: 443
+  nginx:
+    allowCIDR:
+      - 10.254.0.0/16
+      - 172.20.0.0/16
+      - 172.21.0.0/16
+  falcon:
+    allowCIDR:
+      - 35.160.117.193
+      - 52.43.192.139
+      - 54.187.226.134
+  okta:
+    allowCIDR:
+      - 0.0.0.0/0 # TODO: restrict if Okta has published public IP range.
+  mongo:
+    host: "tst-mr-bean-alcyon-migration-docdb.tst.rts.onl"
+    username: mongo
+    ssl: false
+    port: 27017
+    database: instigator
+    allowCIDR:
+      - 10.254.11.0/24
+      - 10.254.12.0/24
+      - 10.254.13.0/24
+  redis:
+    url: redis://tst-mr-bean-alcyon-migration-redis.tst.rts.onl:6379/0
+    allowCIDR:
+      - 10.254.11.0/24
+      - 10.254.12.0/24
+      - 10.254.13.0/24
+  onPremDB:
+    host: "172.31.4.111"
+    port: "1521"
+    database: "qaapp.qatest.redflex.com"
+    username: "READ_ONLY"
+    allowCIDR:
+      - 172.31.4.0/24
+  ec2Metadata:
+    allowCIDR: 169.254.169.254/32
+  route53:
+    allowCIDR: 0.0.0.0/0
+    port: 443
+  kubeApiServerPodCIDR: #TODO: Replace the below value with EKS cluster subnets CIDR Ranges
+    - 10.254.0.0/16
+  kubeApiServerPodPort: 443
+  baseNamespace: base
+  baseReleaseName: base-release
+  monitoringNamespace: monitoring
+  applicationNamespace: upgrade
+  utilityNamespace: utility
+  migrationNamespace: upgrade
+  armNamespace: upgrade
+  alcyoncontrolNamespace: alcyon-control
+  usNamespace: upgrade
+  stubNamespace: upgrade

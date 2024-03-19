@@ -1,0 +1,146 @@
+# Default values for alcyon-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+global:
+  replicaCount: 1
+  eksVersion: "1.21"
+  image:
+    registry: dockerp.rtsprod.net
+    pullPolicy: Always
+    pullSecret: regsecret
+  environment: test
+  ingress:
+    class: "nginx"
+    webDomain: stg.rts.onl
+    serviceDomain: alc-api.stg.rts.onl
+    photonoticeDomain: photonotice.stg.rts.onl
+    photonoticeDomainCASK: photonoticecack.stg.rts.onl
+    wizardDomain: wizard.stg.rts.onl
+    sidekiqDomain: sidekiq.stg.rts.onl
+    armDomain: arm.stg.rts.onl
+    ipaprocessrDomain: ipaprocessr.stg.rts.onl
+  publicIngress:
+    class: "public-ingress-nginx"
+    serviceDomain: alcyonapi.stg.rts.onl
+  minioEnabled: "false"
+  activeSpringProfile: Test
+  db:
+    host: stg-us-gov-alcyon-backoffice-rds.stg.rts.onl
+    port: 5432
+    allowCIDR:
+      - 10.251.11.0/24
+      - 10.251.12.0/24
+      - 10.251.13.0/24
+  reports:
+    db:
+      host: stg-us-gov-alcyon-backoffice-report-rds.stg.rts.onl
+      port: 5432
+      allowCIDR:
+        - 10.251.11.0/24
+        - 10.251.12.0/24
+        - 10.251.13.0/24
+  sqs:
+    allowCIDR: #SQS VPC endpoint IP
+      - 10.251.1.0/24
+      - 10.251.2.0/24
+      - 10.251.3.0/24
+  kafka:
+    allowCIDR:
+      - 10.251.11.0/24
+      - 10.251.12.0/24
+      - 10.251.13.0/24
+    port: 9096
+  loadBalancer:
+    allowCIDR:
+      - 10.251.1.0/24
+      - 10.251.2.0/24
+      - 10.251.3.0/24
+  internalLB:
+    allowCIDR:
+      - 10.33.4.212/32
+      - 10.35.5.65/32
+  s3:
+    region: us-west-2
+    allowCIDR:
+      # curl -L https://ip-ranges.amazonaws.com/ip-ranges.json | jq '.prefixes[] | select(.service=="S3" and .region=="us-west-2") | .ip_prefix'
+      - 3.5.0.0/18
+      - 3.5.76.0/22
+      - 3.5.80.0/21
+      - 52.92.16.0/20
+      - 52.92.128.0/17
+      - 52.216.0.0/15
+      - 52.218.128.0/17
+      - 54.231.0.0/17
+  elasticsearch:
+    protocol: https
+    host: "vpc-stg-us-gov-logs-es-xhsvrzibd6mgvbrlqay2pfs2mi.us-west-2.es.amazonaws.com"
+    allowCIDR:
+      - 10.251.1.0/24
+      - 10.251.2.0/24
+      - 10.251.3.0/24
+    port: 443
+  nginx:
+    allowCIDR:
+      - 10.251.0.0/16
+      - 172.20.0.0/16
+      - 172.21.0.0/16
+  falcon:
+    allowCIDR:
+      - 35.160.117.193
+      - 52.43.192.139
+      - 54.187.226.134
+  okta:
+    allowCIDR:
+      - 0.0.0.0/0 # TODO: restrict if Okta has published public IP range.
+  mongo:
+    host: "stg-us-gov-alcyon-migration-docdb-cluster.cluster-cu6ciq2zcxyg.us-west-2.docdb.amazonaws.com"
+    username: mongo
+    ssl: false
+    port: 27017
+    database: instigator
+    allowCIDR:
+      - 10.251.11.0/24
+      - 10.251.12.0/24
+      - 10.251.13.0/24
+  redis:
+    url: redis://stg-us-gov-alcyon-migration-redis.stg.rts.onl:6379/0
+    allowCIDR:
+      - 10.251.11.0/24
+      - 10.251.12.0/24
+      - 10.251.13.0/24
+  onPremDB:
+    host: "172.31.4.111"
+    port: "1521"
+    database: "qaapp.qatest.redflex.com"
+    username: "READ_ONLY"
+    allowCIDR:
+      - 172.31.4.0/24
+  ec2Metadata:
+    allowCIDR: 169.254.169.254/32
+  route53:
+    allowCIDR: 0.0.0.0/0
+    port: 443
+  kubeApiServerPodCIDR: #TODO: Replace the below value with EKS cluster subnets CIDR Ranges
+    - 10.251.0.0/16
+  kubeApiServerPodPort: 443
+  baseNamespace: base
+  baseReleaseName: base-release
+  monitoringNamespace: monitoring
+  applicationNamespace: alcyon-app
+  utilityNamespace: utility
+  migrationNamespace: migration
+  armNamespace: arm
+  alcyoncontrolNamespace: alcyon-control
+  usNamespace: us
+  stubNamespace: stub
+  configserver:
+    useLocalFile: false
+    retry:
+      maxAttempts: 4
+    rest:
+      domain: http://configstore.utility
+      username: ''
+      password: ''
+    cache:
+      evictFrequency: 300000
+      enableEviction: true

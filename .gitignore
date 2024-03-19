@@ -1,0 +1,6 @@
+.DS*
+.idea/
+*.tgz
+**/test.yaml
+test/
+*.swp
