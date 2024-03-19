@@ -1,0 +1,35 @@
+
+https://redflex.atlassian.net/wiki/spaces/CEGSD/pages/81680412/Alcyon+-+Environments
+docker restart alcyon alcyon-bg
+Get logs: docker logs -f --tail 300 inges... 
+Get logs:
+docker logs -f --tail 300 ingestr
+docker logs -f --tail 300 monitr
+docker logs -f --tail 300 mediaserver-wa
+docker logs -f --tail 300 alcyon
+docker logs -f --tail 300 alcyon-bg
+to recreate containers cd ~ docker rm -... by Miomir Boskovic
+to recreate containers
+cd ~
+docker rm -f alcyon alcyon-bg
+docker-compose up -d alcyon alcyon-bg
+docker image prune -a
+sudo du -d 1 -h / 
+sudo du -d 1 -h /
+sudo du -d 1 -h /var/lib/docker/overlay2
+sudo du -d 1 -h /var/lib/docker/overlay2
+To restart alcyon: k get po -n alcyon-app... 
+To restart alcyon:
+k get po -n alcyon-app
+k delete po -n alcyon-app <list all alcyon and alcyon-bg containers, space separated>
+Link https://redflex.atlassian.net/wiki/spa...
+https://redflex.atlassian.net/wiki/spaces/CEGSD/pages/2683633704/Alcyon+-+Support+-+WA
+kubernetes.container_name: ingestr 
+kubernetes.container_name: ingestr
+
+Administrator@wapol
+Install123$
+
+docker run -it --rm -v /usr/share/redflex/redflex-helm-charts/:/data/ dockerp.rtsprod.net/common/aws-kubernetes-tools:latest
+~/uat-au-wa.sh
+# Enter your redflex.okta.com credentials\o,kubectl get pods -n alcyon-app

@@ -1,0 +1,69 @@
+FROM python:3.9-slim-buster
+
+COPY okta_aws_login_config /root/.okta_aws_login_config
+
+# kubectl version: curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt
+ENV KUBECTL_VERSION=v1.26.6
+# Download version number in https://www.terraform.io/downloads.html
+ENV TERRAFORM_VERSION=1.5.3
+# Helm latest https://github.com/helm/helm/releases
+ENV HELM_VERSION=v3.12.2
+#https://github.com/databus23/helm-diff/blob/master/plugin.yaml
+ENV HELM_DIFF_PLUGIN_VERSION=v3.8.1
+#https://golang.org/doc/install#install
+ENV GO_VERSION=1.20.6
+ENV PATH="${PATH}:/usr/local/go/bin:/root/go/bin"
+
+ENV PACKAGES="curl whois git unzip vim groff less gcc"
+
+ADD resources/ /root
+
+RUN apt update && apt upgrade -y \
+    && pip install --upgrade pip setuptools-rust \
+    && pip install futures==2.2.0 awscli
+RUN apt install -y $PACKAGES \
+    && pip3 install --upgrade gimme-aws-creds \
+    && echo "Installing kubectl" \
+    && curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl \
+    && curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh | bash \
+    && mv kubectl /usr/local/bin/kubectl \
+    && echo "Install kubectx and kubens" \
+    && curl -o /usr/local/bin/kubens https://raw.githubusercontent.com/ahmetb/kubectx/master/kubens \
+    && curl -o /usr/local/bin/kubectx https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx \
+    && chmod 744 /usr/local/bin/kubens \
+    && chmod 744 /usr/local/bin/kubectx \
+    && echo "Installing helm" \
+    && curl -LO --silent --show-error https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz \
+    && tar -xvf helm-${HELM_VERSION}-linux-amd64.tar.gz \
+    && mv linux-amd64/helm /usr/local/bin/helm \
+    && echo "Installing helm diff plugin" \
+    && helm plugin install https://github.com/databus23/helm-diff --version ${HELM_DIFF_PLUGIN_VERSION} --debug \
+    && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+    && unzip awscliv2.zip \
+    && ./aws/install \
+    && echo "Installing terraform" \
+    && curl -LO https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
+    && unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
+    && mv terraform /usr/local/bin/terraform \
+    && chmod +x /usr/local/bin/kubectl /usr/local/bin/terraform  \
+    && echo "Installing Golang" \
+    && curl -LO https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz \
+    && rm -rf /usr/local/go \
+    && tar -xzf go${GO_VERSION}.linux-amd64.tar.gz \
+    && mv go /usr/local \
+    && go version \
+    && rm -rf helm-${HELM_VERSION}-linux-amd64.tar.gz \
+    && rm -rf linux-amd64/ \
+    && rm -rf terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
+    && rm -rf go${GO_VERSION}.linux-amd64.tar.gz \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt clean \
+    && chmod +x /root/*.sh \
+    && echo "alias k=kubectl" >> /root/.bashrc \
+    && echo "alias kg='kubectl get'" >> /root/.bashrc \
+    && echo "alias kd='kubectl describe'" >> /root/.bashrc \
+    && echo "alias ke='kubectl edit'" >> /root/.bashrc \
+    && echo "alias kl='kubectl logs'" >> /root/.bashrc
+WORKDIR /root
+
+CMD ["/bin/bash"]

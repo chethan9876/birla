@@ -1,0 +1,118 @@
+---
+version: 2
+plan:
+  project-key: TRIN
+  name: DOTInterfacr
+  key: DTI
+
+stages:
+  - Build:
+    - Build
+
+Build:
+  requirements:
+    - Docker
+  tasks:
+    - script:
+        scripts:
+          - set -e
+          - export JAVA_HOME=$bamboo_JAVA_11_HOME
+          - export PATH=$JAVA_HOME/bin:$PATH
+          - java -version
+          - ./gradlew -DbuildNo=${bamboo.buildNumber} clean build sonarQube
+          - ARTIFACT=$(./gradlew -DbuildNo=${bamboo.buildNumber} properties -q | grep "name:" | awk '{print $2}')
+          - VERSION_NUMBER=$(./gradlew -DbuildNo=${bamboo.buildNumber} properties -q | grep "version:" | awk '{print $2}')
+          - echo "Tag and build docker image"
+          - docker build --force-rm=true --build-arg version_number=${VERSION_NUMBER} --build-arg artifact=${ARTIFACT} -t docker.rtsprod.net/trinity/${ARTIFACT}:${VERSION_NUMBER} -t docker.rtsprod.net/trinity/${ARTIFACT}:latest .
+          - docker push docker.rtsprod.net/trinity/${ARTIFACT}:${VERSION_NUMBER}
+          - docker push docker.rtsprod.net/trinity/${ARTIFACT}:latest
+          - docker image rm -f docker.rtsprod.net/trinity/${ARTIFACT}:${VERSION_NUMBER}
+          - docker image rm -f docker.rtsprod.net/trinity/${ARTIFACT}:latest
+  final-tasks:
+    - test-parser:
+        type: junit
+        test-results:
+          - 'build/test-results/**/*.xml'
+  artifacts:
+    - name: Jar file
+      location: build/libs
+      pattern: '*.jar'
+      shared: true
+    - name: Open API Specs
+      location: build
+      pattern: '*.yaml'
+      shared: true
+
+---
+version: 2
+
+deployment:
+  name: DOTInterfacr
+  source-plan: TRIN-DTI
+
+release-naming:
+  next-version-name: 1.0.0-${bamboo.buildNumber}
+  applies-to-branches: true
+  auto-increment: false
+
+environments:
+  - couch
+  - alc-dev
+
+couch:
+  triggers:
+    - build-success
+  requirements:
+    - Docker
+  tasks:
+    - script:
+        scripts:
+          - echo "Deploying to Couch environment"
+          - set -e
+          - ssh -i ~/.ssh/ApacKeyPair.pem ec2-user@couch-int.rts.onl << EOF
+          - docker pull docker.rtsprod.net/trinity/dotinterfacr:${bamboo.deploy.version}
+          - docker pull docker.rtsprod.net/trinity/dotinterfacr:latest
+          - docker rm -f dotinterfacr
+          - export TAG=${bamboo.deploy.version}
+          - /usr/bin/docker-compose up -d --no-deps dotinterfacr
+          - EOF
+
+alc-dev:
+  triggers:
+    - build-success
+  requirements:
+    - Docker
+  tasks:
+    - script:
+        scripts:
+          - echo "Deploying to alc-dev environment"
+          - set -e
+          - ssh -i ~/.ssh/ApacKeyPair.pem ec2-user@alc-dev-int.rts.onl << EOF
+          - docker pull docker.rtsprod.net/trinity/dotinterfacr:${bamboo.deploy.version}
+          - docker pull docker.rtsprod.net/trinity/dotinterfacr:latest
+          - docker rm -f dotinterfacr
+          - export TAG=${bamboo.deploy.version}
+          - /usr/bin/docker-compose up -d --no-deps dotinterfacr
+          - EOF
+
+# Deployment permissions
+---
+version: 2
+
+deployment:
+  name: DOTInterfacr
+
+deployment-permissions:
+  - groups:
+      - GSG-Bamboo_User
+    permissions:
+      - view
+      - edit
+
+default-environment-permissions:
+  - groups:
+      - GSG-Bamboo_User
+    permissions:
+      - view
+      - edit
+      - deploy
