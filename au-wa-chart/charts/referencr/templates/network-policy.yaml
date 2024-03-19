@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: referencr-network-policy
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      app: referencr
+      release: {{ .Release.Name }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        {{ range $index,$cidrRange := .Values.api.allowCIDR -}}
+        - ipBlock:
+            cidr:  {{ $cidrRange}}
+        {{ end }}
+      ports:
+        - protocol: TCP
+          port: 443
+    - from:
+      {{ range $index,$cidrRange := .Values.global.loadBalancer.allowCIDR }}
+        - ipBlock:
+            cidr: {{ $cidrRange }}
+        {{ end }}
+      ports:
+        - port: 8080
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: alcyon-bg
+          namespaceSelector:
+            matchLabels:
+              name: {{ .Values.global.applicationNamespace }}
+      ports:
+        - protocol: TCP
+          port: 8080
+---

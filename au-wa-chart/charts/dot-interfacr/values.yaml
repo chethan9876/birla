@@ -1,0 +1,7 @@
+# Default values for dotinterfacer.
+tier: backend
+name: dotinterfacr
+path: dotinterfacr
+volumeName: dotinterfacr-efs
+storageClassName: nfs
+imageTag: latest

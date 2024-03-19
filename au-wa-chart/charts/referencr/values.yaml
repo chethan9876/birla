@@ -1,0 +1,13 @@
+# Default values for referencr.
+tier: backend
+name: referencr
+path: referencr
+volumeName: referencr-efs
+storageClassName: nfs
+imageTag: latest
+vault:
+  enabled: false
+defaultTimeZone: Australia/Perth  
+alcyon:
+  domain: http://alcyon-bg.alcyon-app/
+  username: alcyonservice@wa

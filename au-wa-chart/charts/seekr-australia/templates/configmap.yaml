@@ -1,0 +1,22 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Values.name }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.name }}
+    tier: {{ .Values.tier }}
+data:
+  SPRING_PROFILES_ACTIVE: {{ .Values.global.activeSpringProfile }}
+  SPRING_CLOUD_VAULT_ENABLED: {{ .Values.vault.enabled | quote }}
+  LOOKUPDATASOURCE_DEFAULT_DEFAULT: {{ .Values.lookupDefault | quote }}
+  LOOKUPDATASOURCE_WADOT_DEFAULT: {{ .Values.lookupDefault | quote }}
+  LOOKUPDATASOURCE_WADOT_ACT: {{ .Values.ACT | quote }}
+  LOOKUPDATASOURCE_WADOT_NSW: {{ .Values.NSW | quote }}
+  LOOKUPDATASOURCE_WADOT_NT: {{ .Values.NT | quote }}
+  LOOKUPDATASOURCE_WADOT_QLD: {{ .Values.QLD | quote }}
+  LOOKUPDATASOURCE_WADOT_SA: {{ .Values.SA | quote }}
+  LOOKUPDATASOURCE_WADOT_TAS: {{ .Values.TAS | quote }}
+  LOOKUPDATASOURCE_WADOT_VIC: {{ .Values.VIC | quote }}
+  LOOKUPDATASOURCE_WADOT_WA: {{ .Values.WA | quote }}
+  SEEKR_DEFAULTTIMEZONE: {{ .Values.defaultTimezone }}

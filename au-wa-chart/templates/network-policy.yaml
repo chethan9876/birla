@@ -1,0 +1,57 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: frontend-au-wa-network-policy
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      tier: frontend
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+              app.kubernetes.io/instance: {{ .Values.global.baseReleaseName }}
+              app.kubernetes.io/component: controller
+          namespaceSelector:
+            matchLabels:
+              name: {{ .Values.global.baseNamespace }}
+      ports:
+        - protocol: TCP
+          port: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-au-wa-network-policy
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      tier: backend
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+              app.kubernetes.io/instance: {{ .Values.global.baseReleaseName }}
+              app.kubernetes.io/component: controller
+          namespaceSelector:
+            matchLabels:
+              name: {{ .Values.global.baseNamespace }}
+        - podSelector:
+            matchLabels:
+              app: prometheus
+          namespaceSelector:
+            matchLabels:
+              name: {{ .Values.global.monitoringNamespace }}
+      ports:
+        - protocol: TCP
+          port: 8080
+---

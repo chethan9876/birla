@@ -1,0 +1,9 @@
+# Default values for Seekr Australia.
+tier: backend
+name: seekr-australia
+path: seekr-australia
+volumeName: seekr-australia-efs
+storageClassName: nfs
+imageTag: latest
+vault:
+  enabled: false

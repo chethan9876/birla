@@ -1,0 +1,8 @@
+# Default values for ledgr Australia.
+tier: backend
+name: ledgr-australia
+path: ledgr-australia
+volumeName: ledgr-australia-efs
+storageClassName: nfs
+imageTag: latest
+

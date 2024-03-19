@@ -1,0 +1,93 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.name }}
+  labels:
+    app: {{ .Values.name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.global.ingress.class | quote }}
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: $1
+spec:
+  rules:
+    - host: {{ .Values.global.ingress.serviceDomain }}
+      http:
+        paths:
+          - path: /{{ .Values.path }}(/actuator/info)
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.name }}
+                port:
+                  number: 80
+---
+{{ if .Values.global.usealb -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: "{{ .Values.name }}-alb"
+  labels:
+    app: {{ .Values.name }}
+    chart: {{ .Values.name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/group.name: "{{ .Values.global.environmentName }}-internal"
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    alb.ingress.kubernetes.io/rewrite-target: /
+    alb.ingress.kubernetes.io/certificate-arn: "{{ .Values.global.certificateARN }}"
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/healthcheck-path: /actuator/health
+    alb.ingress.kubernetes.io/actions.redirect: >
+      {"type":"redirect","redirectConfig":{"host":"{{ .Values.path }}-alb.{{ .Values.global.ingress.webDomain }}","path":"/*","port":"#{port}","protocol":"#{protocol}","query":"#{query}","statusCode":"HTTP_302"}}
+spec:
+  rules:
+    - host: {{ .Values.global.ingress.serviceDomainALB }}
+      http:
+        paths:
+          - path: /{{ .Values.path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: redirect
+                port:
+                  name: use-annotation
+    - host: {{ .Values.path }}-alb.{{ .Values.global.ingress.webDomain }}
+      http:
+        paths:
+          - path: /actuator/info
+            pathType: Exact
+            backend:
+              service:
+                name: {{ .Values.name }}
+                port:
+                  number: 80
+          - path: /api/
+            pathType: Exact
+            backend:
+              service:
+                name: redirect
+                port:
+                  name: use-annotation
+          - path: /eInfringement/lodge
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.name }}
+                port:
+                  number: 80
+          - path: /eInfringement/media
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.name }}
+                port:
+                  number: 80
+        
+{{- end }}
+

@@ -1,0 +1,66 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Values.name }}-network-policy
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ .Values.name }}
+      release: {{ .Release.Name }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: alcyon
+          namespaceSelector:
+            matchLabels:
+              name: {{ .Values.global.applicationNamespace }}
+        - podSelector:
+            matchLabels:
+              app: alcyon-bg
+          namespaceSelector:
+            matchLabels:
+              name: {{ .Values.global.applicationNamespace }}
+      ports:
+        - protocol: TCP
+          port: 8080
+    - from:
+      {{ range $index,$cidrRange := .Values.global.loadBalancer.allowCIDR }}
+        - ipBlock:
+            cidr: {{ $cidrRange }}
+        {{ end }}
+      ports:
+        - port: 8080
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: alcyon-bg
+          namespaceSelector:
+            matchLabels:
+              name: {{ .Values.global.applicationNamespace }}
+      ports:
+        - protocol: TCP
+          port: 8080
+    - ports:
+        - port: 443
+          protocol: TCP
+    - to:
+        {{ range $index,$cidrRange := .Values.global.sqs.allowCIDR -}}
+        - ipBlock:
+            cidr:  {{ $cidrRange}}
+        {{ end }}
+      ports:
+        - protocol: TCP
+          port: 443
+    - to:
+        - ipBlock:
+            cidr: {{ .Values.global.ec2Metadata.allowCIDR }}
+      ports:
+        - protocol: TCP
+          port: 80
+---

@@ -1,0 +1,15 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Values.name }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.name }}
+    tier: {{ .Values.tier }}
+data:
+  SPRING_PROFILES_ACTIVE: {{ .Values.global.activeSpringProfile }}
+  DOTINTERFACR_ALCYON_REST_DOMAIN: {{ .Values.alcyon.rest.domain }}
+  DOTINTERFACR_ALCYON_REST_USERNAME: {{ .Values.alcyon.rest.username }}
+  DOTINTERFACR_DEFAULTTIMEZONE: {{ .Values.defaultTimezone }}
+
+

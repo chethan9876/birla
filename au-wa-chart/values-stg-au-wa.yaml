@@ -1,0 +1,47 @@
+seekr-australia:
+  imageTag: 1.0.0-45
+  lookupDefault: WA-stub
+  ACT: ND-stub
+  NT: ND-stub
+  NSW: ND-stub
+  QLD: ND-stub
+  SA: ND-stub
+  TAS: ND-stub
+  VIC: ND-stub
+  WA: WA-stub
+  defaultTimezone: Australia/Perth
+  vault:
+    enabled: false
+referencr:
+  imageTag: 1.0.0-7
+  api:
+    allowCIDR:
+    - 0.0.0.0/0   
+ledgr-australia:
+  imageTag: 1.0.0-17
+  defaultTimezone: Australia/Perth
+  sqs:
+    region: ap-southeast-2
+  queues:
+    paymentNotification: stg-au-wa-alcyon-backoffice-payment-due-notification-events-sqs
+submittr:
+  imageTag: 1.0.0-7
+  defaultTimezone: Australia/Perth
+  alcyon:
+    rest:
+      username: alcyonservice@WA
+      domain:  http://alcyon-bg.alcyon-app
+      endpoints:
+        mediaUpdateURL: /im/api/Submitr/v1/UpdateInfringementMedia
+  s3:
+    region: ap-southeast-2
+    mediaBucketName: stg-au-wa-alcyon-backoffice-media-s3
+dotinterfacr:
+  imageTag: 1.0.0-48
+  defaultTimezone: Australia/Perth
+  alcyon:
+    rest:
+      domain: http://alcyon-bg.alcyon-app
+      username: alcyonservice@wa  
+  
+
