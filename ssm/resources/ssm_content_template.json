@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.2",
+  "description": "${description}",
+  "parameters": {},
+  "runtimeConfig": {
+    "aws:runShellScript": {
+      "properties": [
+        {
+          "id": "0.aws:runShellScript",
+          "runCommand": ["${command}"]
+        }
+      ]
+    }
+  }
+}
