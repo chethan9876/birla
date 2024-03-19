@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<application-configuration>
+    <setupStep>complete</setupStep>
+    <setupType>custom</setupType>
+    <buildNumber>60706</buildNumber>
+    <properties>
+        <property name="bamboo.artifacts.directory">${bambooHome}/artifacts</property>
+        <property name="bamboo.config.directory">${bambooHome}/xml-data/configuration</property>
+        <property name="bamboo.jms.broker.client.uri">failover:(tcp://bamboo-int.rtsprod.net:54663?wireFormat.maxInactivityDuration=300000)?initialReconnectDelay=15000&amp;maxReconnectAttempts=10</property>
+        <property name="bamboo.jms.broker.uri">tcp://0.0.0.0:54663?wireFormat.maxInactivityDuration=300000</property>
+        <property name="bamboo.project.directory">${bambooHome}/xml-data/builds</property>
+        <property name="bamboo.repository.logs.directory">${bambooHome}/xml-data/repository-specs</property>
+        <property name="buildWorkingDir">${bambooHome}/xml-data/build-dir</property>
+        <property name="hibernate.c3p0.acquire_increment">3</property>
+        <property name="hibernate.c3p0.idle_test_period">30</property>
+        <property name="hibernate.c3p0.max_size">100</property>
+        <property name="hibernate.c3p0.max_statements">0</property>
+        <property name="hibernate.c3p0.min_size">3</property>
+        <property name="hibernate.c3p0.timeout">120</property>
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.connection.password">bamboouser</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://newbamboodb.cvpjar0twgf3.ap-southeast-2.rds.amazonaws.com:5432/bamboo</property>
+        <property name="hibernate.connection.username">bamboo</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL82Dialect</property>
+        <property name="hibernate.setup">true</property>
+        <property name="license.string">AAABXA0ODAoPeNptkU9rg0AQxe9+ioVe2oOiNi1JYKGpbkEwRlR635gxXdBd2T8Sv33NGiEtue2wM /Pe781TZQBlYkD+O/L97etqG6xRVFYo9IO1c6TdUQgvZTVwBeTENBMck6wiRV4kJXEiwTWtdUY7w F8gz0ahXEgNchnNTHcEeWg+bZmKmra7M3CtsBs4uZH1D1UQUw34KugGgeu/O4vepWdytJ+Gt6xjG k6LItlT1uLGSnq9lfyQcGpauHi16DxqFgdTMxsAa2ngsakCOqHh5ip43JO3lFvLfxOpxh4se3TY7 0kRJbvUmYxxDZzy+h5gotvc6G4rSk2vrnFDWwULchLjNIlLkrnrt9UmDENneuP7+iDPlDNF7SWKm RhVkjYNq1E5Kg3ddAM9olRPYUmwjf8Dbme1b5DquiZ0YlC1ZL1dOhOj5xLkAPIFBWhOCNmIHDLQ1 szys/VfecPFezAsAhQpd9rNpn340ZZQ2T9XVLB+FcTsBgIUDTnCRfBSnqllKviGCIdObOdINIc=X 02h5</property>
+        <property name="lucene.index.dir">${bambooHome}/index</property>
+        <property name="serverId">B1TN-CHZQ-HHJB-40HY</property>
+        <property name="serverKey">53</property>
+        <property name="webwork.multipart.saveDir">${bambooHome}/temp</property>
+    </properties>
+</application-configuration>

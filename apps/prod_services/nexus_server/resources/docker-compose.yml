@@ -1,0 +1,94 @@
+nexus:
+  image: sonatype/nexus3:3.16.1
+  container_name: nexus
+  environment:
+    JAVA_MAX_HEAP: 1500m
+    VIRTUAL_HOST: nexus.rtsprod.net
+    VIRTUAL_PORT: 8081
+  expose:
+    - "8081"
+  ports:
+    - "18443:18443"
+    - "18453:18453"
+    - "18444:18444"
+  volumes:
+  - /data/nexus-data:/nexus-data:rw
+  restart: always
+cadvisor:
+  image: google/cadvisor:latest
+  container_name: cadvisor
+  restart: always
+  environment:
+     VIRTUAL_HOST: cadvisor.nexus.rtsprod.net
+     VIRTUAL_PORT: 8080
+  volumes:
+     - /:/rootfs:ro
+     - /var/run:/var/run:rw
+     - /var/lib/docker/:/var/lib/docker:ro
+     - /sys:/sys:ro
+nginx-proxy:
+  image: jwilder/nginx-proxy
+  container_name: nginx-proxy
+  environment:
+    DEFAULT_HOST: nexus.rtsprod.net
+  ports:
+    - "80:80"
+    - "443:443"
+  links:
+    - nexus
+    - sonar
+  volumes:
+    - /data/nginx/certs:/etc/nginx/certs:ro
+    - /data/nginx/vhost.d:/etc/nginx/vhost.d:rw
+    - /data/nginx/conf.d:/etc/nginx/conf.d:rw
+    - /usr/share/nginx/html
+    - /var/run/docker.sock:/tmp/docker.sock:ro
+  restart: always
+sonar:
+  image: sonarqube:7.4-community
+  container_name: sonar
+  environment:
+    VIRTUAL_HOST: sonar.rtsprod.net
+    VIRTUAL_PORT: 9000
+    sonar.jdbc.username: sonar
+    sonar.jdbc.password: sonar
+    sonar.jdbc.url: jdbc:postgresql://sonardb:5432/sonar
+  ports:
+    - "9000:9000"
+  volumes:
+    - /data/sonarqube/data:/opt/sonarqube/data:rw
+    - /data/sonarqube/conf:/opt/sonarqube/conf:rw
+    - /data/sonarqube/logs:/opt/sonarqube/logs:rw
+    - /data/sonarqube/extensions:/opt/sonarqube/extensions:rw
+  restart: always
+  links:
+    - sonardb
+sonardb:
+   container_name: sonardb
+   image: postgres:11
+   volumes:
+    - /data/sonardb/postgres:/var/lib/postgresql:rw
+    - /data/sonardb/backup:/data:rw
+   environment:
+     POSTGRES_USER: sonar
+     POSTGRES_PASSWORD: sonar
+     POSTGRES_DB: sonar
+     PGDATA: /var/lib/postgresql/data
+   expose:
+       - "5432"
+   restart: always
+chartmuseum:
+  image: chartmuseum/chartmuseum:latest
+  container_name: chartmuseum
+  environment:
+    VIRTUAL_HOST: charts.rtsprod.net
+    VIRTUAL_PORT: 8080
+    STORAGE: local
+    STORAGE_LOCAL_ROOTDIR: /data
+    BASIC_AUTH_USER: redflex
+    BASIC_AUTH_PASS: R#dfl#xS#cr#t
+  ports:
+    - "8080:8090"
+  volumes:
+    - /data/chartmuseum/charts:/data:rw
+  restart: always

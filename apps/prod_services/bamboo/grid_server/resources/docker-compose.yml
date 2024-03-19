@@ -1,0 +1,33 @@
+version: '2'
+services:
+  selenium-hub:
+    image: selenium/hub
+    restart: always
+    environment:
+    - GRID_TIMEOUT=600
+    ports:
+    - 80:4444
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+  chrome:
+    image: selenium/node-chrome
+    restart: always
+    links:
+    - selenium-hub:hub
+    volumes:
+    - /dev/shm:/dev/shm # Mitigates the Chromium issue described at https://code.google.com/p/chromium/issues/detail?id=519952
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+  firefox:
+    image: selenium/node-firefox
+    restart: always
+    links:
+    - selenium-hub:hub
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"

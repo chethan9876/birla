@@ -1,0 +1,13 @@
+version: '3'
+services:
+  bitbucket:
+      image: atlassian/bitbucket-server:5.7.0
+      container_name: bitbucket
+      restart: always
+      ports:
+       - 80:7990
+       - 7999:7999
+      volumes:
+       - /data/bitbucket:/data
+      environment:
+        BITBUCKET_HOME: /data/

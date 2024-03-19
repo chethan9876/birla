@@ -1,0 +1,11 @@
+#cloud-config
+
+coreos:
+  units:
+    - name: data.mount
+      command: start
+      content: |
+        [Mount]
+        What=/dev/xvdb
+        Where=/data
+        Type=ext4

@@ -1,0 +1,1 @@
+echo -E '${queries}' | docker run -i -a STDIN --rm jbergknoff/postgresql-client postgresql://postgres:${db_password}@${db_url}/postgres
