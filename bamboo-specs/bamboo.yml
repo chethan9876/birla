@@ -1,0 +1,39 @@
+---
+version: 2
+
+plan:
+  project-key: DOPS
+  name: redflex-infrastructure
+  key: RIF
+
+stages:
+  - Test:
+    - Test
+
+Test:
+  requirements:
+    - Docker
+  tasks:
+    - script:
+        scripts:
+          - mkdir -p $HOME/go
+          - docker run --rm -v $(pwd)/test:/app -w /app golangci/golangci-lint:latest-alpine golangci-lint run -v
+          - docker run --rm -v $(pwd):/root/redflex-infrastructure -v $HOME/go:/root/go --entrypoint "/root/redflex-infrastructure/entrypoint.sh" docker.rtsprod.net/common/aws-kubernetes-tools:latest
+  final-tasks:
+    - test-parser:
+        type: junit
+        test-results:
+          - 'test_report/*.xml'
+
+# Plan permissions
+---
+version: 2
+plan: DOPS-RIF
+
+plan-permissions:
+  - groups:
+      - GSG-Bamboo_User
+    permissions:
+      - view
+      - edit
+      - build
